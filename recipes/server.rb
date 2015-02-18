@@ -36,7 +36,7 @@ unless node['rundeck']['secret_file'].nil?
 end
 
 case node['platform_family']
-when 'rhel'
+when 'rhel', 'fedora'
   yum_repository 'rundeck' do
     description 'Rundeck - Release'
     url 'http://dl.bintray.com/rundeck/rundeck-rpm'
