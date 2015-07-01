@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-include_recipe 'rundeck::default'
 include_recipe 'java'
 include_recipe 'apache2'
 include_recipe 'apache2::mod_deflate'
