@@ -86,6 +86,7 @@ default['rundeck']['windows']['winrm_cert_trust'] = 'all'
 default['rundeck']['windows']['winrm_hostname_trust'] = 'all'
 default['rundeck']['windows']['winrm_protocol'] = 'https'
 default['rundeck']['windows']['winrm_timeout'] = 'PT60.000S'
+default['rundeck']['windows']['winrm_plugin'] = 'https://github.com/rundeck-plugins/rundeck-winrm-plugin/releases/download/v1.3.1/rundeck-winrm-plugin-1.3.1.jar'
 
 # LDAP Properties
 default['rundeck']['ldap']['provider'] = 'ldap://servername:389'
