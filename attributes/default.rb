@@ -17,7 +17,7 @@ default['rundeck']['log_dir'] = '/var/log/chef-rundeck'
 # web server configuration
 default['rundeck']['use_ssl'] = false
 default['rundeck']['cert']['shortname'] = 'star'
-default['rundeck']['cert']['name'] = "#{['rundeck']['cert']['shortname']}.#{node['domain']}"
+default['rundeck']['cert']['name'] = "#{node['rundeck']['cert']['shortname']}.#{node['domain']}"
 default['rundeck']['server_url'] = "#{node['rundeck']['use_ssl'] ? 'https' : 'http'}://#{node['rundeck']['hostname']}"
 
 default['rundeck']['log_level'] = 'INFO' # ERR,WARN,INFO,VERBOSE,DEBUG

@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+include_recipe 'chef-sugar'
 include_recipe 'java'
 include_recipe 'apache2'
 include_recipe 'apache2::mod_deflate'
@@ -82,24 +83,24 @@ directory "#{node['rundeck']['basedir']}/projects" do
   recursive true
 end
 
-directory "#{node['rundeck']['basedir']}/.chef" do
-  owner node['rundeck']['user']
-  group node['rundeck']['group']
-  recursive true
-  mode '0700'
-end
-
-template "#{node['rundeck']['basedir']}/.chef/knife.rb" do
-  owner node['rundeck']['user']
-  group node['rundeck']['group']
-  source 'knife.rb.erb'
-  variables(
-            user_home: node['rundeck']['basedir'],
-            node_name: node['rundeck']['user'],
-            chef_server_url: node['rundeck']['chef_url']
-            )
-  notifies (node['rundeck']['restart_on_config_change'] ? :restart : :nothing), 'service[rundeck]', :delayed
-end
+# directory "#{node['rundeck']['basedir']}/.chef" do
+#   owner node['rundeck']['user']
+#   group node['rundeck']['group']
+#   recursive true
+#   mode '0700'
+# end
+#
+# template "#{node['rundeck']['basedir']}/.chef/knife.rb" do
+#   owner node['rundeck']['user']
+#   group node['rundeck']['group']
+#   source 'knife.rb.erb'
+#   variables(
+#             user_home: node['rundeck']['basedir'],
+#             node_name: node['rundeck']['user'],
+#             chef_server_url: node['rundeck']['chef_url']
+#             )
+#   notifies (node['rundeck']['restart_on_config_change'] ? :restart : :nothing), 'service[rundeck]', :delayed
+# end
 
 directory "#{node['rundeck']['basedir']}/.ssh" do
   owner node['rundeck']['user']
@@ -123,7 +124,7 @@ remote_file "#{node['rundeck']['basedir']}/libext/#{node['rundeck']['windows']['
   group node['rundeck']['group']
   mode '0644'
   backup false
-  source 'rundeck-winrm-plugin-1.1.jar'
+  source node['rundeck']['windows']['winrm_plugin']
   notifies (node['rundeck']['restart_on_config_change'] ? :restart : :nothing), 'service[rundeck]', :delayed
 end
 
