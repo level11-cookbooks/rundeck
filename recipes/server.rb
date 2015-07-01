@@ -201,22 +201,31 @@ end
 end
 
 if node['rundeck']['use_ssl']
-  cookbook_file "#{node['apache']['dir']}/ssl/#{node['rundeck']['cert']['name']}.crt" do
-    cookbook node['rundeck']['cert']['cookbook']
-    source "certs/#{node['rundeck']['cert']['name']}.crt"
+
+  ssl = encrypted_data_bag_item_for_environment('secrets', 'ssl')
+  shortname = node['rundeck']['cert']['shortname']
+
+  file "#{node['apache']['dir']}/ssl/#{node['rundeck']['cert']['name']}.crt" do
+    content ssl[shortname]['crt']
+    owner 'root'
+    group 'root'
+    mode '0644'
     notifies :restart, 'service[apache2]'
   end
 
-  cookbook_file "#{node['apache']['dir']}/ssl/#{node['rundeck']['cert']['name']}.key" do
-    cookbook node['rundeck']['cert']['cookbook']
-    source "certs/#{node['rundeck']['cert']['name']}.key"
+  file "#{node['apache']['dir']}/ssl/#{node['rundeck']['cert']['name']}.key" do
+    content ssl[shortname]['key']
+    owner 'root'
+    group 'root'
+    mode '0600'
     notifies :restart, 'service[apache2]'
   end
 
-  cookbook_file "#{node['apache']['dir']}/ssl/#{node['rundeck']['cert']['ca_name']}.crt" do
-    cookbook node['rundeck']['cert']['cookbook']
-    source "certs/#{node['rundeck']['cert']['ca_name']}.crt"
-    not_if { node['rundeck']['cert']['ca_name'].nil? }
+  file "#{node['apache']['dir']}/ssl/#{node['rundeck']['cert']['name']}.info" do
+    content ssl[shortname]['info']
+    owner 'root'
+    group 'root'
+    mode '0644'
     notifies :restart, 'service[apache2]'
   end
 end
@@ -224,8 +233,7 @@ end
 template 'apache-config' do
   path "#{node['apache']['dir']}/sites-available/rundeck.conf"
   source 'rundeck.conf.erb'
-  cookbook node['rundeck']['apache-template']['cookbook']
-  mode 00644
+  mode '0644'
   owner 'root'
   group 'root'
   variables(
@@ -244,32 +252,32 @@ service 'rundeckd' do
   action :start
 end
 
-bags = data_bag(node['rundeck']['rundeck_projects_databag'])
-
-# projects = {}
-bags.each do |project|
-  pdata = data_bag_item(node['rundeck']['rundeck_projects_databag'], project)
-  custom = ''
-  unless pdata['project_settings'].nil?
-    pdata['project_settings'].map do |key, val|
-      custom += " --#{key}=#{val}"
-    end
-  end
-
-  cmd = <<-EOH.to_s
-  rd-project -p #{project} -a create \
-  --resources.source.1.type=url \
-  --resources.source.1.config.includeServerNode=true \
-  --resources.source.1.config.generateFileAutomatically=true \
-  --resources.source.1.config.url=#{pdata['chef_rundeck_url'].nil? ? node['rundeck']['chef_rundeck_url'] : pdata['chef_rundeck_url']}/#{project} \
-  --project.resources.file=#{node['rundeck']['datadir']}/projects/#{project}/etc/resources.xml #{custom}
-  EOH
-
-  bash "check-project-#{project}" do
-    user node['rundeck']['user']
-    code cmd
-    not_if do
-      File.exist?("#{node['rundeck']['datadir']}/projects/#{project}/etc/project.properties")
-    end
-  end
-end
+# bags = data_bag(node['rundeck']['rundeck_projects_databag'])
+#
+# # projects = {}
+# bags.each do |project|
+#   pdata = data_bag_item(node['rundeck']['rundeck_projects_databag'], project)
+#   custom = ''
+#   unless pdata['project_settings'].nil?
+#     pdata['project_settings'].map do |key, val|
+#       custom += " --#{key}=#{val}"
+#     end
+#   end
+#
+#   cmd = <<-EOH.to_s
+#   rd-project -p #{project} -a create \
+#   --resources.source.1.type=url \
+#   --resources.source.1.config.includeServerNode=true \
+#   --resources.source.1.config.generateFileAutomatically=true \
+#   --resources.source.1.config.url=#{pdata['chef_rundeck_url'].nil? ? node['rundeck']['chef_rundeck_url'] : pdata['chef_rundeck_url']}/#{project} \
+#   --project.resources.file=#{node['rundeck']['datadir']}/projects/#{project}/etc/resources.xml #{custom}
+#   EOH
+#
+#   bash "check-project-#{project}" do
+#     user node['rundeck']['user']
+#     code cmd
+#     not_if do
+#       File.exist?("#{node['rundeck']['datadir']}/projects/#{project}/etc/project.properties")
+#     end
+#   end
+# end
