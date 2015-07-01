@@ -118,7 +118,7 @@ file "#{node['rundeck']['basedir']}/.ssh/id_rsa" do
   notifies (node['rundeck']['restart_on_config_change'] ? :restart : :nothing), 'service[rundeck]', :delayed
 end
 
-remote_file "#{node['rundeck']['basedir']}/libext/#{node['rundeck']['windows']['winrm_plugin']}" do
+remote_file "#{node['rundeck']['basedir']}/libext/#{File.basename(node['rundeck']['windows']['winrm_plugin'])}" do
   owner node['rundeck']['user']
   group node['rundeck']['group']
   mode '0644'
