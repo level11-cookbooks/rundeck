@@ -5,7 +5,6 @@ default['rundeck']['datadir'] = '/var/rundeck'
 default['rundeck']['deb']['package'] = 'rundeck-2.3.2-1-GA.deb'
 default['rundeck']['deb']['options'] = false #--force-confdef --force-confold
 default['rundeck']['url'] = "http://download.rundeck.org/deb/#{node['rundeck']['deb']['package']}"
-default['rundeck']['checksum'] = '812ee51372659659715767ac923bd2a664d84fc2'
 default['rundeck']['port'] = 4440
 default['rundeck']['jaas'] = 'internal'
 default['rundeck']['default_role'] = 'user'
