@@ -1,0 +1,7 @@
+---
+<% @nodes.each do |n| %>
+<%= n.name %>:
+  hostname: <%= n['ipaddress'] %>
+  username: <%= @rundeck_user %>
+  tags: <% n.chef_environment %>,<% n['roles'].first %>
+<% end %>

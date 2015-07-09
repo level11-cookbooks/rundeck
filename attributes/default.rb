@@ -2,21 +2,22 @@ default['rundeck'] = {}
 default['rundeck']['configdir'] = '/etc/rundeck'
 default['rundeck']['basedir'] = '/var/lib/rundeck'
 default['rundeck']['datadir'] = '/var/rundeck'
+#default['rundeck']['deb']['package'] = 'rundeck-2.5.1-1-GA.deb'
 default['rundeck']['deb']['package'] = 'rundeck-2.3.2-1-GA.deb'
 default['rundeck']['deb']['options'] = false #--force-confdef --force-confold
 default['rundeck']['url'] = "http://download.rundeck.org/deb/#{node['rundeck']['deb']['package']}"
-default['rundeck']['port'] = 4440
+default['rundeck']['port'] = '4440'
 default['rundeck']['jaas'] = 'internal'
 default['rundeck']['default_role'] = 'user'
-default['rundeck']['hostname'] = "rundeck.#{node['domain']}"
-default['rundeck']['email'] = "rundeck@#{node['domain']}"
-default['rundeck']['restart_on_config_change'] = false
+default['rundeck']['hostname'] = "rundeck-primary.#{node['ultramobile']['domain_name']}"
+default['rundeck']['email'] = "rundeck@#{node['ultramobile']['domain_name']}"
 default['rundeck']['log_dir'] = '/var/log/chef-rundeck'
+default['rundeck']['hipchat_plugin'] = 'http://search.maven.org/remotecontent?filepath=com/hbakkum/rundeck/plugins/rundeck-hipchat-plugin/1.5.0/rundeck-hipchat-plugin-1.5.0.jar'
 
 # web server configuration
 default['rundeck']['use_ssl'] = false
 default['rundeck']['cert']['shortname'] = 'star'
-default['rundeck']['cert']['name'] = "#{node['rundeck']['cert']['shortname']}.#{node['domain']}"
+default['rundeck']['cert']['name'] = "#{node['rundeck']['cert']['shortname']}.#{node['ultramobile']['domain_name']}"
 default['rundeck']['server_url'] = "#{node['rundeck']['use_ssl'] ? 'https' : 'http'}://#{node['rundeck']['hostname']}"
 
 default['rundeck']['log_level'] = 'INFO' # ERR,WARN,INFO,VERBOSE,DEBUG
@@ -26,8 +27,8 @@ default['rundeck']['rss_enabled'] = true
 default['rundeck']['session_timeout'] = 30
 
 # databag name configuration
-default['rundeck']['rundeck_databag_secure'] = 'secure'
-default['rundeck']['rundeck_databag'] = 'rundeck'
+default['rundeck']['rundeck_databag'] = 'secrets'
+default['rundeck']['rundeck_databag_item'] = 'rundeck'
 default['rundeck']['rundeck_projects_databag'] = 'rundeck_projects'
 
 # chef-rundeck
@@ -47,9 +48,9 @@ default['rundeck']['group'] = 'rundeck'
 default['rundeck']['user_home'] = '/home/rundeck'
 default['rundeck']['chef_config'] = '/etc/chef/rundeck.rb'
 default['rundeck']['chef_client_name'] = 'chef-rundeck'
-default['rundeck']['chef_rundeck_url'] = "http://chef.#{node['domain']}:#{node['rundeck']['chef_rundeck_port']}"
-default['rundeck']['chef_webui_url'] = "https://chef.#{node['domain']}"
-default['rundeck']['chef_url'] = "https://chef.#{node['domain']}"
+default['rundeck']['chef_rundeck_url'] = "http://chef.#{node['ultramobile']['domain_name']}:#{node['rundeck']['chef_rundeck_port']}"
+default['rundeck']['chef_webui_url'] = "https://chef.#{node['ultramobile']['domain_name']}"
+default['rundeck']['chef_url'] = "https://chef.#{node['ultramobile']['domain_name']}"
 default['rundeck']['project_config'] = '/etc/chef/chef-rundeck.json'
 
 # SMTP settings for rundeck notification emails

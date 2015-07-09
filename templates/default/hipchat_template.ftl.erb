@@ -1,0 +1,11 @@
+Rundeck job <a href="${execution.job.href}">
+<#if execution.job.group?has_content>${execution.job.group}/</#if>${execution.job.name}</a>
+<#if trigger == "start">
+    <b>started</b>
+<#elseif trigger == "failure">
+    <b>failed</b>
+<#elseif trigger == "success">
+    <b>succeeded</b>
+</#if>
+<br>
+Build Number <b>${execution.context.option.BUILD_NUMBER}</b>, Environment: <b>${execution.context.option.ENVIRONMENT}</b>, Submitter:  <b>${execution.context.option.SUBMITTER}</b> &nbsp&nbsp&nbsp(<a href="${execution.href}">View Output</a>)

@@ -1,47 +1,47 @@
 <VirtualHost *:80>
-        ServerName <%= node['rundeck']['hostname'] %>
-        ServerAdmin <%= node['rundeck']['email'] %>
-<% if node['rundeck']['use_ssl'] %>
-        Redirect permanent / https://<%= node['rundeck']['hostname'] %>/
+        ServerName <%= @hostname %>
+        ServerAdmin <%= @email %>
+<% if @use_ssl %>
+        Redirect permanent / https://<%= @hostname %>/
 </VirtualHost>
 
 <VirtualHost *:443>
-        ServerName <%= node['rundeck']['hostname'] %>
-        ServerAdmin <%= node['rundeck']['email'] %>
+        ServerName <%= @hostname %>
+        ServerAdmin <%= @email %>
 <% end %>
         ErrorLog <%= @log_dir %>/rundeck_error.log
         TransferLog <%= @log_dir %>/rundeck_access.log
-<% if node['rundeck']['use_ssl'] %>
+<% if @use_ssl %>
 
         SSLEngine On
-        SSLCertificateFile <%= node['apache']['dir'] %>/ssl/<%= node['rundeck']['cert']['name'] %>.crt
-        SSLCertificateKeyFile <%= node['apache']['dir'] %>/ssl/<%= node['rundeck']['cert']['name'] %>.key
-<% unless node['rundeck']['cert']['ca_name'].nil? %>
-        SSLCertificateChainFile <%= node['apache']['dir'] %>/ssl/<%= node['rundeck']['cert']['ca_name'] %>.crt
-<% end %>
+        SSLCertificateFile <%=@apachedir%>/ssl/<%=@certname%>.crt
+        SSLCertificateKeyFile <%=@apachedir%>/ssl/<%=@certname%>.key
 <% end %>
 
-        DocumentRoot <%= @doc_root %>
+        DocumentRoot <%= @docroot %>
         ServerSignature On
-        
+
         <Proxy *>
-                Order deny,allow
-                Allow from all
+                # Order deny,allow
+                # Allow from all
+                Require all granted
         </Proxy>
-        
-        ProxyPass        / http://localhost:<%= node['rundeck']['port'] %>/
-        ProxyPassReverse / http://localhost:<%= node['rundeck']['port'] %>/
-        
+
+        ProxyPass        / http://localhost:<%=@rundeck_port%>/
+        ProxyPassReverse / http://localhost:<%=@rundeck_port%>/
+
         <Directory />
                 Options FollowSymLinks
                 AllowOverride None
         </Directory>
-        <Location /server-status>
-          SetHandler server-status
 
-          Order Deny,Allow
-          Deny from all
-          Allow from 127.0.0.1
+        <Location /server-status>
+            SetHandler server-status
+
+            # Order Deny,Allow
+            # Deny from all
+            # Allow from 127.0.0.1
+            Require host 127.0.0.1
         </Location>
-        
+
 </VirtualHost>
