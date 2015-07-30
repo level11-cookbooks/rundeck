@@ -25,7 +25,7 @@ include_recipe 'apache2::mod_headers'
 include_recipe 'apache2::mod_ssl' if node['rundeck']['use_ssl']
 include_recipe 'apache2::mod_proxy'
 include_recipe 'apache2::mod_proxy_http'
-include_recipe 'python'
+# include_recipe 'python'
 
 bag = node['rundeck']['rundeck_databag']
 item = node['rundeck']['rundeck_databag_item']
@@ -301,46 +301,47 @@ end
 # end
 
 
-python_pip 'awscli'
+# python_pip 'awscli'
 
 # Get AWS credentials from encrypted databag
-um_creds = encrypted_data_bag_item_for_environment('secrets', 'ultramobile_credentials')
-
-require 'etc'
-roothome = Etc.getpwuid.dir
-directory "#{roothome}/.aws" do
-  owner 'root'
-  group 'root'
-  mode '0700'
-end
-
-template "#{roothome}/.aws/credentials" do
-  source 'aws_credentials.erb'
-  owner 'root'
-  group 'root'
-  mode '0600'
-  variables(
-    :key => um_creds['aws']['ec2_readonly']['aws_access_key_id'],
-    :secret => um_creds['aws']['ec2_readonly']['aws_secret_access_key']
-  )
-end
-
-ruby_block 'get_aws_nodes' do  # Needs to be in execution phase, so awscli is available
-  block do
-    require 'json'
-    # TODO: Following assumes running as root (not sudo from another user) because credential is implicit
-    nodesjson = Mixlib::ShellOut.new("aws ec2 describe-instances --filter Name=tag:Environment,Values=#{node.chef_environment} --output json --region #{node['ec2']['region']}")
-    nodesjson.run_command
-    node.run_state[:aws_nodes] = ::JSON.parse(nodesjson.stdout)
-  end
-end
-
-# TODO finish & put this in a better location
-# template '/home/rundeck/resources.yml' do
-#   owner node['rundeck']['user']
-#   group node['rundeck']['group']
-#   mode '0644'
+# um_creds = encrypted_data_bag_item_for_environment('secrets', 'ultramobile_credentials')
+#
+# require 'etc'
+# roothome = Etc.getpwuid.dir
+# directory "#{roothome}/.aws" do
+#   owner 'root'
+#   group 'root'
+#   mode '0700'
+# end
+#
+# template "#{roothome}/.aws/credentials" do
+#   source 'aws_credentials.erb'
+#   owner 'root'
+#   group 'root'
+#   mode '0600'
 #   variables(
-#     :nodes => node.run_state[:aws_nodes]
+#     :key => um_creds['aws']['ec2_readonly']['aws_access_key_id'],
+#     :secret => um_creds['aws']['ec2_readonly']['aws_secret_access_key']
 #   )
 # end
+
+# Use chef search rather than aws -- can't converge a node that doesn't have chef-client, in any case
+# ruby_block 'get_aws_nodes' do  # Needs to be in execution phase, so awscli is available
+#   block do
+#     require 'json'
+#     # TODO: Following assumes running as root (not sudo from another user) because credential is implicit
+#     nodesjson = Mixlib::ShellOut.new("aws ec2 describe-instances --filter Name=tag:Environment,Values=#{node.chef_environment} --output json --region #{node['ec2']['region']}")
+#     nodesjson.run_command
+#     node.run_state[:aws_nodes] = ::JSON.parse(nodesjson.stdout)
+#   end
+# end
+nodes = search(:node, "chef_environment:#{node.chef_environment}")
+
+template '/etc/rundeck/resources.yml' do
+  owner node['rundeck']['user']
+  group node['rundeck']['group']
+  mode '0644'
+  variables(
+    :nodes => nodes
+  )
+end
