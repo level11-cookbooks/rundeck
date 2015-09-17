@@ -335,7 +335,7 @@ end
 #     node.run_state[:aws_nodes] = ::JSON.parse(nodesjson.stdout)
 #   end
 # end
-nodes = search(:node, "chef_environment:#{node.chef_environment}")
+nodes = search(:node, "chef_environment:#{node.chef_environment} AND -name:rundeck*")
 
 template '/etc/rundeck/resources.yml' do
   owner node['rundeck']['user']
