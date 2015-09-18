@@ -9,10 +9,14 @@ default['rundeck']['url'] = "http://download.rundeck.org/deb/#{node['rundeck']['
 default['rundeck']['port'] = '4440'
 default['rundeck']['jaas'] = 'internal'
 default['rundeck']['default_role'] = 'user'
+
 default['rundeck']['hostname'] = "rundeck-primary-#{node.chef_environment}.#{node['ultramobile']['domain_name']}"
 default['rundeck']['email'] = "rundeck@#{node['ultramobile']['domain_name']}"
 default['rundeck']['log_dir'] = '/var/log/chef-rundeck'
 default['rundeck']['hipchat_plugin'] = 'http://search.maven.org/remotecontent?filepath=com/hbakkum/rundeck/plugins/rundeck-hipchat-plugin/1.5.0/rundeck-hipchat-plugin-1.5.0.jar'
+default['rundeck']['hipchat_api_version'] = 'v2'
+default['rundeck']['hipchat_api_authtoken'] = '917336:IQKLQPmwWD7MnKSZNWIArFjUF68cCBPdraRNX9gu'
+default['rundeck']['hipchat_template'] = '/etc/rundeck/hipchat_template.ftl'
 
 # web server configuration
 default['rundeck']['use_ssl'] = false

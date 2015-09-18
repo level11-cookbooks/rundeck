@@ -34,6 +34,12 @@ framework.email.password = <%= @rundeck[:mail][:password] %>
 framework.email.ssl = false
 framework.email.failonerror = true
 
+# Hipchat
+framework.plugin.Notification.HipChatNotification.apiVersion=<%=@hipchat_api_version%>
+framework.plugin.Notification.HipChatNotification.apiAuthToken=<%=@hipchat_api_authtoken%>
+framework.plugin.Notification.HipChatNotification.messageTemplateLocation=<%=@hipchat_template%>
+
+
 # ----------------------------------------------------------------
 # Do not make changes below this line
 # ----------------------------------------------------------------

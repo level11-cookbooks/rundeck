@@ -178,7 +178,11 @@ template "#{node['rundeck']['configdir']}/framework.properties" do
   source 'framework.properties.erb'
   variables(
             rundeck: node['rundeck'],
-            rundeck_users: rundeck_users['users']
+            rundeck_users: rundeck_users['users'],
+            hipchat_api_version: node['rundeck']['hipchat_api_version'],
+            hipchat_api_authtoken: node['rundeck']['hipchat_api_authtoken'],
+            hipchat_template: node['rundeck']['hipchat_template']
+
             )
   notifies :restart, 'service[rundeck]'
 end
